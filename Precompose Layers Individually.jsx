@@ -25,14 +25,22 @@ function precomposeOneByOne(selectedLayers) {
         
         var thisPrecompLayer;
         var thisIndex, inPoint, outPoint;
+        var thisPrecompComp;
         for(var i = 0; i < selectedLayers.length; i++) {
             thisIndex = selectedLayers[i].index;
             inPoint = selectedLayers[i].inPoint;
             outPoint = selectedLayers[i].outPoint;
-            app.project.activeItem.layers.precompose([thisIndex], selectedLayers[i].name, true);
+            thisPrecompComp = app.project.activeItem.layers.precompose([thisIndex], selectedLayers[i].name, true);
             thisPrecompLayer = app.project.activeItem.layer(thisIndex);
+             thisPrecompLayer.inPoint = inPoint;
+             thisPrecompLayer.outPoint = outPoint;
+            thisPrecompComp.workAreaStart = thisPrecompLayer.inPoint;
+            thisPrecompComp.workAreaDuration = outPoint - inPoint;
+            thisPrecompComp.openInViewer();
+            app.executeCommand(app.findMenuCommandId("Trim Comp to Work Area"));
+            app.executeCommand(app.findMenuCommandId("Close"));
+            thisPrecompLayer.startTime = inPoint;
             thisPrecompLayer.inPoint = inPoint;
-            thisPrecompLayer.outPoint = outPoint;
             }
         
         app.endUndoGroup();
